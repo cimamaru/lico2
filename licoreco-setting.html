@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>リコリコ 設定判別ツール</title>
+<style>
+:root{--bg:#f7f5f3;--fg:#1f2430;--sub:#6a7080;--line:#d9d5d0;--acc:#c0313b;--bar:#b9bec9;--hi:#c0313b;--inp:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171d;--fg:#eceef2;--sub:#9aa1b0;--line:#2c313c;--acc:#ee5560;--bar:#3a4050;--hi:#ee5560;--inp:#1d212a}}
+:root[data-theme="dark"]{--bg:#14171d;--fg:#eceef2;--sub:#9aa1b0;--line:#2c313c;--acc:#ee5560;--bar:#3a4050;--hi:#ee5560;--inp:#1d212a}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",system-ui,sans-serif;line-height:1.6}
+main{max-width:520px;margin:0 auto;padding:16px 0 40px}
+header{padding:0 16px}
+h1{font-size:22px;margin:0 0 10px;font-weight:800;letter-spacing:.02em}
+h2{font-size:15px;margin:26px 0 4px;font-weight:700}
+.tabs{display:flex;border-bottom:1px solid var(--line);margin:0 16px}
+.tabs button{flex:1;width:auto;height:42px;border:0;border-bottom:3px solid transparent;border-radius:0;background:none;font-size:15px;font-weight:700;color:var(--sub)}
+.tabs button.on{color:var(--fg);border-bottom-color:var(--acc)}
+.tabs button:active{background:none;color:var(--fg)}
+.pages{display:flex;align-items:flex-start;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scrollbar-width:none;transition:height .2s}
+.pages::-webkit-scrollbar{display:none}
+.pg{flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always;padding:0 16px}
+.lead{color:var(--sub);font-size:13px;margin:12px 0 12px}
+.it{border-top:1px solid var(--line);padding:12px 0}
+.hd{display:flex;gap:8px;align-items:flex-start;font-size:14px;font-weight:600}
+.hd input{margin-top:6px}
+.hd small{display:block;color:var(--sub);font-weight:400;font-size:12px}
+.obs{margin-left:auto;font-size:12px;color:var(--acc);font-weight:600;white-space:nowrap}
+.fs{display:flex;flex-wrap:wrap;gap:8px 16px;margin:8px 0 0 24px}
+.f{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sub)}
+.f input{width:72px;font-size:16px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--inp);color:var(--fg);text-align:right}
+.g input[type=number]{width:96px;font-size:18px}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+button{font:inherit;font-size:16px;width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--inp);color:var(--fg);cursor:pointer}
+button:active{background:var(--acc);color:#fff}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.res{border-top:2px solid var(--fg);padding-top:16px;margin-top:22px}
+.top{font-size:15px;margin:0 0 14px}
+.top b{font-size:28px;color:var(--acc);margin:0 2px}
+.bar{display:grid;grid-template-columns:44px 1fr 56px;gap:8px;align-items:center;margin:6px 0;font-size:14px}
+.track{height:18px;background:var(--line);border-radius:3px;overflow:hidden}
+.fill{height:100%;background:var(--bar);width:0;transition:width .25s}
+.fill.hi{background:var(--hi)}
+.pct{text-align:right;font-variant-numeric:tabular-nums}
+.sum{display:flex;justify-content:space-between;gap:12px;font-size:13px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.sum span{color:var(--sub)}
+.sc{overflow-x:auto;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap}
+th,td{padding:6px 5px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--sub);font-weight:600}
+.note{color:var(--sub);font-size:12px;margin-top:14px}
+.reset{margin-top:14px;width:auto;padding:0 16px;font-size:14px;height:40px;background:var(--acc);color:#fff;border-color:var(--acc);font-weight:700}
+.seg{display:flex;gap:6px;margin:6px 0 10px}
+.seg button{flex:1;width:auto;height:36px;font-size:12px;font-weight:600;padding:0 2px}
+.seg button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.zr{display:grid;grid-template-columns:40px 1fr 1fr 46px;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid var(--line);font-size:13px}
+.zr.zh{color:var(--sub);font-size:11px;font-weight:600;text-align:center}
+.zr.zs{font-weight:700;border-bottom:2px solid var(--fg)}
+.zl{font-variant-numeric:tabular-nums}
+.zp,.zt{text-align:center;font-variant-numeric:tabular-nums}
+.zp{color:var(--acc);font-weight:700;text-align:right}
+.cn{display:flex;align-items:center;gap:2px}
+.cn button{width:28px;height:30px;font-size:14px;padding:0;flex:none}
+.cn input{width:100%;min-width:0;font-size:14px;padding:4px 2px;border:1px solid var(--line);border-radius:6px;background:var(--inp);color:var(--fg);text-align:center}
+@media (prefers-reduced-motion:reduce){.fill,.pages{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<header><h1>リコリコ 設定判別ツール</h1></header>
+<div class="tabs" role="tablist"><button id="t0" class="on" role="tab">判別</button><button id="t1" role="tab">カウント</button></div>
+
+<div class="pages" id="pages">
+
+<section class="pg" id="p0">
+<button class="reset" data-reset="p0" style="margin:12px 0 0">判別の入力をリセット</button>
+<p class="lead">スマスロ リコリス・リコイル。実戦データを入れると、設定1〜6の確率を計算します。使う項目はチェックで選べます。左にスワイプするとカウント画面です。</p>
+
+<div class="it g"><div class="hd"><span>総ゲーム数<small>通常時のG数（CZ・ラッシュ・ボーナス中を除く）</small></span></div>
+<div class="fs"><label class="f"><input id="g" type="number" inputmode="numeric" min="0" step="100" value="3000">G</label></div></div>
+
+<h2>回数で判別する項目</h2>
+<div id="items"></div>
+
+<h2>示唆・濃厚系</h2>
+<div class="it"><div class="hd"><input type="checkbox" id="on_h" checked aria-label="示唆を使う"><span>出現した回数<small>該当設定未満は除外します（虹なら設定6が100%）</small></span></div>
+<div class="fs" id="hints"></div></div>
+
+<section class="res" aria-live="polite">
+  <p class="top" id="top"></p>
+  <div id="bars"></div>
+  <div class="sum"><span>高設定（4以上）</span><b id="hi"></b></div>
+  <div class="sum"><span>期待機械割（加重平均）</span><b id="pay"></b></div>
+</section>
+
+<h2>使っている数値</h2>
+<div class="sc"><table id="spec"><thead><tr><th>項目</th><th>設1</th><th>設2</th><th>設3</th><th>設4</th><th>設5</th><th>設6</th></tr></thead><tbody></tbody></table></div>
+
+
+<p class="note">設定1〜6を同じ確率とみなして計算しています。400G到達からのCZ当選はオポジットバトルと、ラッシュ直撃はAT初当りと重なるため、重なる項目を同時に使うと確度が高く出すぎます。初期状態では重なる項目をオフにしています。*印は公開されていない設定の値を前後の設定から補間した推定値です。示唆は「濃厚」として扱い、該当設定未満を除外します。店舗カスタムなどで外れる可能性があるため、疑わしい場合は示唆のチェックを外してください。数値はweb上の解析情報（一撃ほか）に基づく目安です。</p>
+</section>
+
+<section class="pg" id="p1">
+<button class="reset" data-reset="p1" style="margin:12px 0 0">カウントをリセット</button>
+<p class="lead">数えるだけの画面で、一部を除いて判別の計算には使いません。右にスワイプすると判別画面に戻ります。入力はこの端末に保存されます。</p>
+
+<h2>終了画面カウント</h2>
+<p class="note" style="margin-top:0">「456確定」は、千束ラッシュ中のたきな私服、たきなラッシュ中の千束私服です。</p>
+<div class="it"><div class="fs" id="ends" style="margin-left:0;flex-direction:column;gap:8px"></div></div>
+<p class="note" style="margin:14px 0 0">以下の終了画面は濃厚系として判別に反映されます。判別画面の「示唆」のチェックでオン・オフできます。</p>
+<div class="it" style="border-top:0"><div class="fs" id="ends2" style="margin-left:0;flex-direction:column;gap:8px"></div></div>
+
+<h2>規定G数の到達・当選</h2>
+<p class="note" style="margin-top:0">到達は、その規定G数まで回した回数。当選は、そこでCZなどに当選した回数です。</p>
+<div class="seg" id="seg"></div>
+<div id="zones"></div>
+
+</section>
+
+</div>
+</main>
+<script>
+var AVG=[97.9,98.9,101.3,106.1,110.4,114.6];
+var KIDX=[3965.0,3706.6,3107.3,2925.9,2425.8,2084.8];
+var ITEMS=[
+ {id:"cz",t:"r",name:"オポジットバトル",sub:"CZ全体の確率からファーストリコリス分を引いた算出値",x:[198.7,196.9,191.3,183.3,175.9,169.4].map(function(c,i){return 1/(1/c-1/KIDX[i])}),on:1,def:14},
+ {id:"kid",t:"r",name:"ファーストリコリス（幼少期CZ）",sub:"オポジットバトルとは別に数える",x:KIDX,on:1,def:1},
+ {id:"at",t:"r",name:"AT初当り",sub:"リコリスラッシュ",x:[328.8,323.4,312.1,288.3,271.6,256.7],on:1,def:9},
+ {id:"bell",t:"r",name:"共通ベル（通常時）",sub:"右下がりベル揃い。通常時のみ数える",x:[95.8,null,null,87.6,83.2,79.1],on:1,def:0},
+ {id:"weak",t:"b",name:"弱リコリス目 → 変換高確",sub:"弱リコリス目の成立回数と、変換高確へ移行した回数",p:[38.3,null,39.1,41.0,43.0,44.9],on:1,def:0},
+ {id:"g150",t:"b",name:"150G到達 → 変換高確",sub:"150Gに到達した回数と、変換高確へ移行した回数",p:[50.0,null,null,54.7,58.6,62.5],on:1,def:0},
+ {id:"g400",t:"b",name:"400G到達 → CZ当選",sub:"オポジットバトルなどと重なります",p:[10.9,11.7,14.5,16.8,19.5,25.4],on:0,def:0},
+ {id:"dir",t:"r",name:"ラッシュ直撃",sub:"AT初当りと重なります。最深天井は除く",x:[22429.5,19006.5,15454.1,10809.3,7809.6,6263.7],on:0,def:0}
+];
+var HINTS=[
+ {id:"h2a",n:"サミートロフィー銅",m:2},{id:"h3",n:"サミートロフィー銀",m:3},{id:"h4a",n:"サミートロフィー金",m:4},
+ {id:"h5",n:"サミートロフィーキリン柄",m:5},{id:"h6a",n:"サミートロフィー虹",m:6},
+ {id:"h2b",n:"終了画面 押上の風景",m:2},{id:"h4b",n:"終了画面 ロボ太",m:4},{id:"h6b",n:"終了画面 ハワイ",m:6}
+];
+var CTX=[{id:"run",n:"駆け抜け後"},{id:"r50",n:"ラッシュ50後"},{id:"ucz",n:"上位CZ失敗後"},{id:"all",n:"合計"}];
+var ZONES=[0,100,250,400,600,750,800];
+var $=function(i){return document.getElementById(i)};
+function fill(a){var v=a.slice(),est=a.map(function(z){return z===null}),i,j;
+ for(i=0;i<6;i++){if(v[i]===null){var lo=i-1,hi=i+1;while(v[hi]===null)hi++;j=(i-lo)/(hi-lo);v[i]=v[lo]+(v[hi]-v[lo])*j}}
+ return {v:v,est:est}}
+ITEMS.forEach(function(it){var a=it.t==="r"?it.x.map(function(x){return x===null?null:1/x}):it.p.map(function(p){return p===null?null:p/100});var f=fill(a);it.pr=f.v;it.est=f.est});
+function fld(id,lab,step){return '<label class="f">'+lab+(step?'<button data-t="'+id+'" data-d="-1" aria-label="減らす">−</button>':'')+'<input id="'+id+'" type="number" inputmode="numeric" min="0" value="0">'+(step?'<button data-t="'+id+'" data-d="1" aria-label="増やす">＋</button>':'')+'</label>'}
+function cell(id){return '<span class="cn"><button data-t="'+id+'" data-d="-1" aria-label="減らす">−</button><input id="'+id+'" type="number" inputmode="numeric" min="0" value="0"><button data-t="'+id+'" data-d="1" aria-label="増やす">＋</button></span>'}
+$("items").innerHTML=ITEMS.map(function(it){
+ var f=it.t==="r"?fld(it.id+"_k","回数",1):fld(it.id+"_n","試行",1)+fld(it.id+"_k","移行",1);
+ return '<div class="it"><div class="hd"><input type="checkbox" id="on_'+it.id+'" aria-label="'+it.name+'を使う"'+(it.on?' checked':'')+'><span>'+it.name+'<small>'+it.sub+'</small></span><span class="obs" id="obs_'+it.id+'"></span></div><div class="fs">'+f+'</div></div>'}).join("");
+$("hints").innerHTML=HINTS.filter(function(h){return h.n.indexOf("終了画面")<0}).map(function(h){return fld(h.id,h.n,1)}).join("");
+$("ends").innerHTML=[["e1","デフォルト たきな"],["e2","デフォルト ちさと"],["e3","上示唆弱 たきな"],["e4","上示唆弱 ちさと"],["e5","高設定示唆強"],["e6","456確定 たきな"],["e7","456確定 ちさと"]].map(function(e){return fld(e[0],e[1],1)}).join("");
+$("ends2").innerHTML=HINTS.filter(function(h){return h.n.indexOf("終了画面")>=0}).map(function(h){return fld(h.id,h.n,1)}).join("");
+ITEMS.forEach(function(it){if(it.def)$(it.id+"_k").value=it.def});
+/* zones */
+$("seg").innerHTML=CTX.map(function(c,i){return '<button data-c="'+c.id+'"'+(i===0?' class="on"':'')+'>'+c.n+'</button>'}).join("");
+var HEAD='<div class="zr zh"><span>G数</span><span>到達</span><span>当選</span><span>当選率</span></div>';
+$("zones").innerHTML=CTX.map(function(c,i){
+ var rows=ZONES.map(function(z){
+  if(c.id==="all")return '<div class="zr"><span class="zl">'+z+'G</span><span class="zt" id="za_'+z+'">0</span><span class="zt" id="zw_'+z+'">0</span><span class="zp" id="zp_all_'+z+'">-</span></div>';
+  return '<div class="zr"><span class="zl">'+z+'G</span>'+cell("a_"+c.id+"_"+z)+cell("w_"+c.id+"_"+z)+'<span class="zp" id="zp_'+c.id+'_'+z+'">-</span></div>'}).join("");
+ var sum='<div class="zr zs"><span>計</span><span class="zt" id="sa_'+c.id+'">0</span><span class="zt" id="sw_'+c.id+'">0</span><span class="zp" id="sp_'+c.id+'">-</span></div>';
+ return '<div id="zc_'+c.id+'"'+(i===0?'':' hidden')+'>'+HEAD+rows+sum+'</div>'}).join("");
+var tb=document.querySelector("#spec tbody");
+tb.innerHTML=ITEMS.map(function(it){return "<tr><td>"+it.name+"</td>"+it.pr.map(function(p,i){var s=it.t==="r"?"1/"+(1/p).toFixed(1):(p*100).toFixed(1)+"%";return "<td>"+s+(it.est[i]?"*":"")+"</td>"}).join("")+"</tr>"}).join("")+"<tr><td>機械割</td>"+AVG.map(function(a){return "<td>"+a+"%</td>"}).join("")+"</tr>";
+function val(id){var v=parseFloat($(id).value);return isFinite(v)&&v>=0?Math.round(v):0}
+function pc(w,a){return a>0?(w/a*100).toFixed(1)+"%":"-"}
+function calcZ(){
+ var ta={},tw={};
+ CTX.slice(0,3).forEach(function(c){var sa=0,sw=0;
+  ZONES.forEach(function(z){var a=val("a_"+c.id+"_"+z),w=val("w_"+c.id+"_"+z);sa+=a;sw+=w;ta[z]=(ta[z]||0)+a;tw[z]=(tw[z]||0)+w;$("zp_"+c.id+"_"+z).textContent=pc(w,a)});
+  $("sa_"+c.id).textContent=sa;$("sw_"+c.id).textContent=sw;$("sp_"+c.id).textContent=pc(sw,sa)});
+ var A=0,W=0;
+ ZONES.forEach(function(z){$("za_"+z).textContent=ta[z];$("zw_"+z).textContent=tw[z];$("zp_all_"+z).textContent=pc(tw[z],ta[z]);A+=ta[z];W+=tw[z]});
+ $("sa_all").textContent=A;$("sw_all").textContent=W;$("sp_all").textContent=pc(W,A);
+}
+function calc(){
+ var g=parseFloat($("g").value);g=isFinite(g)&&g>0?g:0;
+ var l=[0,0,0,0,0,0];
+ ITEMS.forEach(function(it){
+  var o=$("obs_"+it.id),k=val(it.id+"_k");o.textContent="";
+  if(it.t==="r"){if(g>0&&k>0)o.textContent="1/"+(g/k).toFixed(1);
+   if($("on_"+it.id).checked&&g>0)for(var i=0;i<6;i++){var m=g*it.pr[i];l[i]+=k*Math.log(m)-m}}
+  else{var n=val(it.id+"_n");if(k>n)k=n;if(n>0)o.textContent=(k/n*100).toFixed(1)+"%";
+   if($("on_"+it.id).checked&&n>0)for(var j=0;j<6;j++){var p=it.pr[j];l[j]+=k*Math.log(p)+(n-k)*Math.log(1-p)}}
+ });
+ if($("on_h").checked){var fl=1;HINTS.forEach(function(h){if(val(h.id)>0&&h.m>fl)fl=h.m});
+  for(var s=0;s<fl-1;s++)l[s]=-Infinity}
+ var mx=Math.max.apply(null,l),w=l.map(function(v){return Math.exp(v-mx)}),t=w.reduce(function(a,b){return a+b},0),p=w.map(function(v){return v/t});
+ var best=p.indexOf(Math.max.apply(null,p));
+ $("top").innerHTML="最も可能性が高いのは設定<b>"+(best+1)+"</b>（"+(p[best]*100).toFixed(1)+"%）";
+ $("bars").innerHTML=p.map(function(v,i){return '<div class="bar"><span>設定'+(i+1)+'</span><div class="track"><div class="fill'+(i>=3?' hi':'')+'" style="width:'+(v*100).toFixed(1)+'%"></div></div><span class="pct">'+(v*100).toFixed(1)+'%</span></div>'}).join("");
+ $("hi").textContent=((p[3]+p[4]+p[5])*100).toFixed(1)+"%";
+ $("pay").textContent=AVG.reduce(function(a,x,i){return a+x*p[i]},0).toFixed(1)+"%";
+}
+/* storage */
+var SK="licoreco_v1";
+function save(){try{var o={};document.querySelectorAll("main input").forEach(function(e){if(e.id)o[e.id]=e.type==="checkbox"?e.checked:e.value});localStorage.setItem(SK,JSON.stringify(o))}catch(x){}}
+function load(){try{var o=JSON.parse(localStorage.getItem(SK)||"null");if(!o)return;Object.keys(o).forEach(function(k){var e=$(k);if(!e)return;if(e.type==="checkbox")e.checked=!!o[k];else e.value=o[k]})}catch(x){}}
+/* pages */
+var pg=$("pages"),cur=0;
+function fit(){var w=pg.clientWidth||1;cur=Math.round(pg.scrollLeft/w);if(cur<0)cur=0;if(cur>1)cur=1;
+ pg.style.height=pg.children[cur].scrollHeight+"px";
+ $("t0").classList.toggle("on",cur===0);$("t1").classList.toggle("on",cur===1)}
+function go(i){pg.scrollTo({left:i*pg.clientWidth,behavior:"smooth"})}
+$("t0").addEventListener("click",function(){go(0)});$("t1").addEventListener("click",function(){go(1)});
+var raf=0;pg.addEventListener("scroll",function(){cancelAnimationFrame(raf);raf=requestAnimationFrame(fit)});
+window.addEventListener("resize",function(){pg.scrollLeft=cur*pg.clientWidth;fit()});
+function all(){calc();calcZ();save();fit()}
+var M=document.querySelector("main");
+M.addEventListener("input",all);M.addEventListener("change",all);
+M.addEventListener("click",function(e){
+ var b=e.target.closest("button[data-t]");
+ if(b){var el=$(b.dataset.t);el.value=Math.max(0,val(b.dataset.t)+parseInt(b.dataset.d,10));all();return}
+ var s=e.target.closest("#seg button");
+ if(s){document.querySelectorAll("#seg button").forEach(function(x){x.classList.toggle("on",x===s)});CTX.forEach(function(c){$("zc_"+c.id).hidden=c.id!==s.dataset.c});fit();return}
+ var r=e.target.closest("button[data-reset]");
+ if(r){$(r.dataset.reset).querySelectorAll("input[type=number]").forEach(function(x){x.value=0});all()}
+});
+load();all();
+</script>
+</body>
+</html>
